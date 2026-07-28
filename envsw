@@ -40,6 +40,9 @@ ${BLD}Usage:${RST}
   envsw edit <group> <profile>  create/edit a profile in \$EDITOR
   envsw off <group>             deactivate the group
 
+${BLD}Hooks:${RST} if ~/.envsw/hooks/<group>.sh exists and is executable, it runs as
+  <group>.sh <group> <profile> after every 'envsw use' (e.g. to switch VPN).
+
 ${BLD}Example:${RST}
   envsw use myapp ${RED}prod${RST}
   envsw use myapp ${GRN}dev${RST}
@@ -58,6 +61,7 @@ list)
   found=0
   for dir in "$ROOT"/*/; do
     [ -d "$dir" ] || continue
+    [ "$(basename "$dir")" = hooks ] && continue
     found=1
     group="$(basename "$dir")"
     act="$(active_of "$group")"
@@ -82,13 +86,17 @@ use)
   [ -f "$file" ] || { echo "${RED}error:${RST} $file not found (create it with: envsw edit $group $profile)" >&2; exit 1; }
   ln -sfn "$profile.env" "$ROOT/$group/current"
   echo "${BLD}${CYN}${group}${RST} → $(paint "$profile") ${DIM}(new shells/processes will pick it up)${RST}"
+  hook="$ROOT/hooks/$group.sh"
+  if [ -x "$hook" ]; then
+    "$hook" "$group" "$profile" || echo "${YLW}⚠ hook $hook failed (exit $?)${RST}" >&2
+  fi
   if is_danger "$profile"; then
     echo "${YLW}⚠ production profile active${RST} — every new command now targets ${RED}${profile}${RST}; switch back with ${GRN}envsw use $group dev${RST}"
   fi
   ;;
 show)
   group="${2:-}"
-  if [ -n "$group" ]; then groups=("$group"); else groups=(); for d in "$ROOT"/*/; do [ -d "$d" ] && groups+=("$(basename "$d")"); done; fi
+  if [ -n "$group" ]; then groups=("$group"); else groups=(); for d in "$ROOT"/*/; do [ -d "$d" ] && [ "$(basename "$d")" != hooks ] && groups+=("$(basename "$d")"); done; fi
   for g in "${groups[@]}"; do
     act="$(active_of "$g")"
     if [ -z "$act" ]; then echo "${BLD}${CYN}${g}${RST}: ${DIM}(none active)${RST}"; continue; fi
@@ -111,6 +119,10 @@ off)
   group="${2:?usage: envsw off <group>}"
   rm -f "$ROOT/$group/current"
   echo "${YLW}${group} deactivated${RST}"
+  hook="$ROOT/hooks/$group.sh"
+  if [ -x "$hook" ]; then
+    "$hook" "$group" "" || echo "${YLW}⚠ hook $hook failed (exit $?)${RST}" >&2
+  fi
   ;;
 -v|--version|version) echo "envsw $ENVSW_VERSION" ;;
 -h|--help|help) usage ;;

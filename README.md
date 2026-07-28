@@ -68,6 +68,31 @@ MYAPP_ENV=dev
 MYAPP_DB_URL=mysql://user:pass@dev-host:3306/mydb
 ```
 
+## Hooks
+
+If `~/.envsw/hooks/<group>.sh` exists and is executable, envsw runs it after switching:
+
+```
+~/.envsw/hooks/<group>.sh <group> <profile>   # after `envsw use`
+~/.envsw/hooks/<group>.sh <group> ""          # after `envsw off` (empty profile)
+```
+
+A failing hook prints a warning but never blocks the switch. Typical uses: bouncing a VPN, restarting a local proxy, or notifying other tools when an environment changes. Example — switching VPN together with the profile:
+
+```bash
+#!/usr/bin/env bash
+# ~/.envsw/hooks/myapp.sh
+group="$1"; profile="${2:-}"
+if [ -z "$profile" ]; then
+  sudo /usr/local/sbin/ovpn-myapp down   # envsw off: tear the tunnel down
+else
+  set -a; source "$HOME/.envsw/$group/$profile.env"; set +a
+  sudo /usr/local/sbin/ovpn-myapp up "$MYAPP_OVPN_PROFILE"
+fi
+```
+
+The `hooks` directory is reserved: it never shows up as a group in `envsw list` / `envsw show`.
+
 ## Safety touches
 
 - Profiles named `prod` / `production` / `online` / `live` are shown in **red**, and switching to one prints a warning reminding you to switch back.

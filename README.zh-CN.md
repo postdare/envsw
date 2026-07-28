@@ -68,6 +68,31 @@ MYAPP_ENV=dev
 MYAPP_DB_URL=mysql://user:pass@dev-host:3306/mydb
 ```
 
+## Hooks
+
+如果 `~/.envsw/hooks/<组>.sh` 存在且有可执行权限，envsw 会在切换后调用它：
+
+```
+~/.envsw/hooks/<组>.sh <组> <profile>   # `envsw use` 之后
+~/.envsw/hooks/<组>.sh <组> ""          # `envsw off` 之后（profile 为空串）
+```
+
+hook 执行失败只会打印警告，不会阻止切换。典型用途：联动切换 VPN、重启本地代理、通知其他工具环境已变更。示例——profile 和 VPN 一起切：
+
+```bash
+#!/usr/bin/env bash
+# ~/.envsw/hooks/myapp.sh
+group="$1"; profile="${2:-}"
+if [ -z "$profile" ]; then
+  sudo /usr/local/sbin/ovpn-myapp down   # envsw off：拆掉隧道
+else
+  set -a; source "$HOME/.envsw/$group/$profile.env"; set +a
+  sudo /usr/local/sbin/ovpn-myapp up "$MYAPP_OVPN_PROFILE"
+fi
+```
+
+`hooks` 是保留目录：不会作为 group 出现在 `envsw list` / `envsw show` 里。
+
 ## 安全细节
 
 - 名为 `prod` / `production` / `online` / `live` 的 profile 显示为**红色**，切换过去会打印警告，提醒用完切回。
