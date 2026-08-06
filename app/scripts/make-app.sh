@@ -27,7 +27,7 @@ cat > "$APP/Contents/Info.plist" <<EOF
     <key>CFBundleExecutable</key>      <string>iEnvs</string>
     <key>CFBundleIconFile</key>        <string>AppIcon</string>
     <key>CFBundleIconName</key>        <string>AppIcon</string>
-    <key>CFBundleIdentifier</key>      <string>com.hellodeveye.iEnvs</string>
+    <key>CFBundleIdentifier</key>      <string>com.postdare.iEnvs</string>
     <key>CFBundleName</key>            <string>iEnvs</string>
     <key>CFBundlePackageType</key>     <string>APPL</string>
     <key>CFBundleShortVersionString</key> <string>${VERSION}</string>

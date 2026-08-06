@@ -31,13 +31,13 @@ myapp
 一键安装：
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/hellodeveye/envsw/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/postdare/envsw/main/install.sh | bash
 ```
 
 或者从本地 clone 安装：
 
 ```bash
-git clone https://github.com/hellodeveye/envsw.git
+git clone https://github.com/postdare/envsw.git
 cd envsw && ./install.sh
 ```
 
@@ -111,7 +111,7 @@ fi
 [`app/`](app/) 目录内置 macOS 原生菜单栏 App：点选即切换配置，激活 prod 类
 配置时图标变红，内置配置编辑器，并自动与 CLI 保持同步。
 
-**下载：**去 [Releases 页面](https://github.com/hellodeveye/envsw/releases)
+**下载：**去 [Releases 页面](https://github.com/postdare/envsw/releases)
 下载最新的 `iEnvs-*.zip`，解压后把 `iEnvs.app` 拖进 `/Applications`。目前还
 没有付费 Apple Developer 账号做公证（notarize），所以首次打开需要绕过
 Gatekeeper：右键 `iEnvs.app` → **打开** → 在确认弹窗里再点一次**打开**。

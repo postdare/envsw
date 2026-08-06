@@ -4,7 +4,7 @@
 set -euo pipefail
 
 BIN_DIR="${ENVSW_BIN_DIR:-$HOME/.local/bin}"
-RAW_BASE="${ENVSW_RAW_BASE:-https://raw.githubusercontent.com/hellodeveye/envsw/main}"
+RAW_BASE="${ENVSW_RAW_BASE:-https://raw.githubusercontent.com/postdare/envsw/main}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd 2>/dev/null || pwd)"
 LOCAL_SRC="$SCRIPT_DIR/envsw"
 MARKER="# envsw: auto-load the active env profile"
